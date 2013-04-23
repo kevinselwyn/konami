@@ -1,0 +1,21 @@
+<project name="konami" default="konami" basedir=".">
+	<property name="dist" value="./dist/" />
+	<property name="src" value="./src/" />
+
+	<target name="konami">
+		<mkdir dir="${dist}" />
+		<apply executable="java" parallel="false" verbose="true" dest="${dist}">
+			<fileset dir="${src}">
+				<include name="*.js" />
+			</fileset>
+			<arg line="-jar" />
+			<arg path="build/compiler.jar" />
+			<arg value="--warning_level" />
+			<arg value="QUIET" />
+			<arg value="--js_output_file" />
+			<targetfile />
+			<arg value="--js" />
+			<mapper type="glob" from="*.js" to="*.min.js" />
+		</apply>
+	</target>
+</project>
