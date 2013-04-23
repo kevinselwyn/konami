@@ -22,7 +22,7 @@ Include the following in the `<head>` of your document:
 
 To initialize the plugin, add the following to your document:
 
-```js
+```html
 <script type="text/javascript">
 	Konami.init();
 </script>
