@@ -16,12 +16,14 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-(function(window, document, undefined) {
+/*globals alert, console, CustomEvent, dispatchEvent, document, window*/
+
+(function (window, document, undefined) {
 	"use strict";
 
 	var Konami = {
@@ -34,44 +36,26 @@
 		vars: {
 			pos: 0,
 			touchstart: [0, 0],
-			touchend: [0, 0]
-		},
-		key: function (e) {
-			var code = e.keyCode, key = "";
-
-			switch (code) {
-			case 13:
-				key = "START";
-				break;
-			case 37:
-				key = "LEFT";
-				break;
-			case 38:
-				key = "UP";
-				break;
-			case 39:
-				key = "RIGHT";
-				break;
-			case 40:
-				key = "DOWN";
-				break;
-			case 66:
-				key = "B";
-				break;
-			case 65:
-				key = "A";
-				break;
-			default:
-				key = "";
-				break;
+			touchend: [0, 0],
+			buttons: {
+				13: "START",
+				37: "LEFT",
+				38: "UP",
+				39: "RIGHT",
+				40: "DOWN",
+				66: "B",
+				65: "A"
 			}
+		},
+		keyup: function (e) {
+			var key = Konami.vars.buttons[e.keyCode];
 
 			Konami.key_evaluate(key);
 
 			return true;
 		},
 		key_evaluate: function (key) {
-			var event = this.trigger, pos = this.vars.pos, 
+			var event = this.trigger, pos = this.vars.pos,
 				sequence = this.sequence;
 
 			this.debugging(key);
@@ -85,7 +69,7 @@
 					this.limit -= 1;
 				}
 
-				if (typeof dispatchEvent === "function") {
+				if (dispatchEvent) {
 					event = new CustomEvent(event);
 					document.dispatchEvent(event);
 				} else {
@@ -113,22 +97,13 @@
 		},
 		touch_evaluate: function () {
 			var key = "", pos = this.vars.pos, sequence = this.sequence,
-				touchstart = this.vars.touchstart,
-				touchend = this.vars.touchend;
+				tstart = this.vars.touchstart,
+				tend = this.vars.touchend;
 
-			if (Math.abs(touchstart[0] - touchend[0]) < 
-				Math.abs(touchstart[1] - touchend[1])) {
-				if (touchstart[1] > touchend[1]) {
-					key = "UP";
-				} else {
-					key = "DOWN";
-				}
+			if (Math.abs(tstart[0] - tend[0]) < Math.abs(tstart[1] - tend[1])) {
+				key = (tstart[1] > tend[1]) ? "UP" : "DOWN";
 			} else {
-				if (touchstart[0] > touchend[0]) {
-					key = "LEFT";
-				} else {
-					key = "RIGHT";
-				}
+				key = (tstart[0] > tend[0]) ? "LEFT" : "RIGHT";
 			}
 
 			if (["UP", "DOWN", "LEFT", "RIGHT"].indexOf(sequence[pos]) === -1) {
@@ -156,6 +131,8 @@
 					}
 				});
 			}
+
+			return true;
 		},
 		listener: function (event, callback) {
 			if (document.addEventListener) {
@@ -163,9 +140,11 @@
 			} else {
 				document.attachEvent("on" + event, callback);
 			}
+
+			return true;
 		},
 		events: function () {
-			this.listener("keyup", this.key);
+			this.listener("keyup", this.keyup);
 			this.listener("touchstart", this.touchstart);
 			this.listener("touchend", this.touchend);
 
@@ -176,7 +155,7 @@
 				return false;
 			}
 
-			if (typeof console === "object") {
+			if (console) {
 				console.log(key);
 			} else {
 				alert(key);
@@ -187,4 +166,4 @@
 	};
 
 	window.Konami = Konami;
-})(window, document);
+}(window, document));
