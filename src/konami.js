@@ -6,6 +6,7 @@
 		sequence: ["UP", "UP", "DOWN", "DOWN",
 				   "LEFT", "RIGHT", "LEFT", "RIGHT",
 				   "B", "A", "START"],
+		limit: false,
 		variance: 20,
 		debug: false,
 		vars: {
@@ -62,8 +63,12 @@
 				this.vars.touch = {};
 			}
 
-			if (pos === sequence.length) {
+			if (pos === sequence.length && this.limit !== 0) {
 				pos = 0;
+
+				if (this.limit !== false) {
+					this.limit -= 1;
+				}
 
 				if (typeof dispatchEvent === "function") {
 					document.dispatchEvent(event);

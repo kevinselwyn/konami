@@ -74,6 +74,16 @@ You may create your own sequences to use with this plugin. For example, if you w
 Konami.sequence = ["UP", "UP", "DOWN", "DOWN", "LEFT", "RIGHT", "LEFT", "RIGHT", "B", "A"]
 ```
 
+###Limit
+
+The plugin can fire the `konami` event a custom amount of times.
+
+```js
+Konami.limit = 1;
+```
+
+This will make the event fire only once. `false` (the default setting) will allow it to fire forever while `0` would prevent it from firing at all.
+
 ###Debug
 
 Activating the debugger for this plugin may be useful for diagnosing some touch-related problems when meshing with your application.
