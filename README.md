@@ -10,7 +10,7 @@ The sequence goes:
 
 ![The Konami Code](http://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Konami_Code.svg/500px-Konami_Code.svg.png)
 
-The last button is typically "START" because the code is frequently entered during a pause or start screen and the final "START" resumes or starts the game. For this reason, "START" ("ENTER") is included in the default Konami Code in this plugin.
+The last button is typically `"START"` because the code is frequently entered during a pause or start screen and the final `"START"` resumes or starts the game. For this reason, `"START"` (`"Enter"`) is included in the default Konami Code in this plugin.
 
 ##Usage
 
@@ -38,9 +38,25 @@ document.addEventListener("konami", function () {
 });
 ```
 
+For best cross-browser performance, a custom event listener is included:
+
+```js
+Konami.listen(function () {
+	alert("All Weapons!")
+});
+```
+
 ##Configuration
 
 There are a number of configurable aspects of this plugin.
+
+###Trigger
+
+By default, the custom event that is fired upon completion of the sequence is `konami`. This may be changed:
+
+```js
+Konami.trigger = "konami_code";
+```
 
 ###Sequence
 
@@ -66,7 +82,7 @@ Activating the debugger for this plugin may be useful for diagnosing some touch-
 Konami.debug = true;
 ```
 
-Turning the debugger on will `console.log` the button that has just been pressed.
+Turning the debugger on will `console.log` the button that has just been pressed. On older browsers, button presses will be `alert`ed.
 
 ###Variance
 
@@ -86,7 +102,5 @@ Tested and working on:
 
 *	Google Chrome (Mac + PC)
 *	Firefox (Mac + PC)
-*	Safari (Mac)
 *	Opera (Mac + PC)
-
-IE 8+ support coming in the future.
+*	IE8, IE9

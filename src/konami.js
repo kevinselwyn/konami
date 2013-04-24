@@ -1,7 +1,8 @@
 (function(window, document, undefined) {
-    "use strict";
+	"use strict";
 
 	var Konami = {
+		trigger: "konami",
 		sequence: ["UP", "UP", "DOWN", "DOWN",
 				   "LEFT", "RIGHT", "LEFT", "RIGHT",
 				   "B", "A", "START"],
@@ -47,8 +48,9 @@
 			return true;
 		},
 		key_evaluate: function (key) {
-			var event = new CustomEvent("konami"), pos = this.vars.pos,
-				sequence = this.sequence;
+			var event = (typeof CustomEvent === "function") ? 
+				new CustomEvent(this.trigger) : this.trigger, 
+				pos = this.vars.pos, sequence = this.sequence;
 
 			this.debugging(key);
 
@@ -63,7 +65,11 @@
 			if (pos === sequence.length) {
 				pos = 0;
 
-				document.dispatchEvent(event);
+				if (typeof dispatchEvent === "function") {
+					document.dispatchEvent(event);
+				} else {
+					document.documentElement[event] += 1;
+				}
 			}
 
 			this.vars.pos = pos;
@@ -124,9 +130,27 @@
 
 			return true;
 		},
+		listen: function (callback) {
+			if (document.addEventListener) {
+				document.addEventListener(Konami.trigger, callback);
+			} else {
+				document.documentElement.attachEvent("onpropertychange", function (e) {
+					if (e.propertyName === Konami.trigger) {
+						callback.call();
+					}
+				});
+			}
+		},
+		listener: function (event, callback) {
+			if (document.addEventListener) {
+				document.addEventListener(event, callback);
+			} else {
+				document.attachEvent("on" + event, callback);
+			}
+		},
 		events: function () {
-			document.addEventListener("keyup", this.key);
-			document.addEventListener("touchend", this.touch);
+			this.listener("keyup", this.key);
+			this.listener("touchend", this.touch);
 
 			return true;
 		},
@@ -135,7 +159,11 @@
 				return false;
 			}
 
-			console.log(key);
+			if (typeof console === "object") {
+				console.log(key);
+			} else {
+				alert(key);
+			}
 
 			return true;
 		}

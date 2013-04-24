@@ -1,7 +1,7 @@
 window.onload = function () {
 	Konami.init();
 
-	document.addEventListener("konami", function () {
+	Konami.listen(function () {
 		document.getElementById("message").style.display = "block";
 	});
 };
