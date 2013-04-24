@@ -30,12 +30,11 @@
 				   "LEFT", "RIGHT", "LEFT", "RIGHT",
 				   "B", "A", "START"],
 		limit: false,
-		variance: 20,
 		debug: false,
 		vars: {
 			pos: 0,
-			coords: [0, 0],
-			touch: {}
+			touchstart: [0, 0],
+			touchend: [0, 0]
 		},
 		key: function (e) {
 			var code = e.keyCode, key = "";
@@ -72,19 +71,12 @@
 			return true;
 		},
 		key_evaluate: function (key) {
-			var event = (typeof CustomEvent === "function") ? 
-				new CustomEvent(this.trigger) : this.trigger, 
-				pos = this.vars.pos, sequence = this.sequence;
+			var event = this.trigger, pos = this.vars.pos, 
+				sequence = this.sequence;
 
 			this.debugging(key);
 
-			if (sequence[pos] === key) {
-				pos += 1;
-			} else {
-				pos = 0;
-				this.vars.coords = [0, 0];
-				this.vars.touch = {};
-			}
+			pos = (sequence[pos] === key) ? pos + 1 : 0;
 
 			if (pos === sequence.length && this.limit !== 0) {
 				pos = 0;
@@ -94,6 +86,7 @@
 				}
 
 				if (typeof dispatchEvent === "function") {
+					event = new CustomEvent(event);
 					document.dispatchEvent(event);
 				} else {
 					document.documentElement[event] += 1;
@@ -104,51 +97,44 @@
 
 			return true;
 		},
-		touch: function (e) {
-			Konami.vars.coords = [e.changedTouches[0].clientX,
-								  e.changedTouches[0].clientY];
+		touchstart: function (e) {
+			Konami.vars.touchstart = [e.changedTouches[0].clientX,
+									  e.changedTouches[0].clientY];
+
+			return true;
+		},
+		touchend: function (e) {
+			Konami.vars.touchend = [e.changedTouches[0].clientX,
+									e.changedTouches[0].clientY];
+
 			Konami.touch_evaluate();
 
-			return false;
+			return true;
 		},
 		touch_evaluate: function () {
-			var coords = this.vars.coords, key = "", pos = this.vars.pos,
-				sequence = this.sequence, touch = this.vars.touch,
-				variance = this.variance;
+			var key = "", pos = this.vars.pos, sequence = this.sequence,
+				touchstart = this.vars.touchstart,
+				touchend = this.vars.touchend;
 
-			if (pos === 0) {
-				touch.up = touch.up || coords;
-			}
-
-			if (Math.abs(coords[0] - touch.up[0]) < variance &&
-				Math.abs(coords[1] - touch.up[1]) < variance) {
-				key = key || "UP";
-			}
-
-			if (coords[1] > touch.up[1] &&
-				Math.abs(coords[1] - touch.up[1]) > variance &&
-				Math.abs(coords[0] - touch.up[0]) < variance) {
-				touch.down = touch.down || coords;
-				key = key || "DOWN";
-			}
-
-			if (coords[0] < touch.up[0] &&
-				Math.abs(coords[0] - touch.up[0]) > variance) {
-				touch.left = touch.left || coords;
-				key = key || "LEFT";
-			}
-
-			if (coords[0] > touch.up[0] &&
-				Math.abs(coords[0] - touch.up[0]) > variance) {
-				touch.right = touch.right || coords;
-				key = key || "RIGHT";
+			if (Math.abs(touchstart[0] - touchend[0]) < 
+				Math.abs(touchstart[1] - touchend[1])) {
+				if (touchstart[1] > touchend[1]) {
+					key = "UP";
+				} else {
+					key = "DOWN";
+				}
+			} else {
+				if (touchstart[0] > touchend[0]) {
+					key = "LEFT";
+				} else {
+					key = "RIGHT";
+				}
 			}
 
 			if (["UP", "DOWN", "LEFT", "RIGHT"].indexOf(sequence[pos]) === -1) {
 				key = sequence[pos];
 			}
 
-			this.vars.touch = touch;
 			this.key_evaluate(key);
 
 			return true;
@@ -159,10 +145,12 @@
 			return true;
 		},
 		listen: function (callback) {
-			if (document.addEventListener) {
-				document.addEventListener(Konami.trigger, callback);
+			var d = document;
+
+			if (d.addEventListener) {
+				d.addEventListener(Konami.trigger, callback);
 			} else {
-				document.documentElement.attachEvent("onpropertychange", function (e) {
+				d.documentElement.attachEvent("onpropertychange", function (e) {
 					if (e.propertyName === Konami.trigger) {
 						callback.call();
 					}
@@ -178,7 +166,8 @@
 		},
 		events: function () {
 			this.listener("keyup", this.key);
-			this.listener("touchend", this.touch);
+			this.listener("touchstart", this.touchstart);
+			this.listener("touchend", this.touchend);
 
 			return true;
 		},

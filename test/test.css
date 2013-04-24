@@ -9,3 +9,6 @@ html, body, h1{
 	text-align:center;
 	display:none;
 }
+#message.show{
+	display:block;
+}

@@ -46,6 +46,22 @@ Konami.listen(function () {
 });
 ```
 
+###Gestures
+
+This plugin is also touchscreen gesture enabled. Swiping in the intended direction will be interpreted as that button press. For example, swiping up (bottom to top) will register as `"UP"`.
+
+Non-directional buttons (`["A", "B", "START"]`) will accept any gesture given. Typically, a simple tap will suffice.
+
+Also, it is important to set up your mobile application to prevent default elastic scrolling behavior on iOS:
+
+```js
+document.addEventListener('touchmove', function (e) {
+	e.preventDefault();
+}, false);
+```
+
+[Source](http://www.smilingsouls.net/Blog/20110804114957.html)
+
 ##Configuration
 
 There are a number of configurable aspects of this plugin.
@@ -94,23 +110,18 @@ Konami.debug = true;
 
 Turning the debugger on will `console.log` the button that has just been pressed. On older browsers, button presses will be `alert`ed.
 
-###Variance
-
-The variance is an important variable for determining the direction on touch-based devices. It is given as an integer that will be used in equations to judge how a tap should be categorized.
-
-The default variance is `20`, which means `+/-20px` is used in directional calculations. For larger screens, use a larger variance.
-
-```js
-Konami.variance = 50;
-```
-
-By default, the first tap is `"UP"`. Based on those coordinates, the other directional taps can be determined. If the next button in the sequence is non-directional ("A", "B", "START"), any tap will suffice.
-
 ##Tested Environments
 
 Tested and working on:
 
+**Desktop**
+
 *	Google Chrome (Mac + PC)
 *	Firefox (Mac + PC)
+*	Safari (Mac + PC)
 *	Opera (Mac + PC)
 *	IE8, IE9
+
+**Mobile**
+
+*	Safari (iPhone)
