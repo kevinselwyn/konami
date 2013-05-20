@@ -82,7 +82,7 @@ The default sequence included in this plugin is:
 ["UP", "UP", "DOWN", "DOWN", "LEFT", "RIGHT", "LEFT", "RIGHT", "B", "A", "START"]
 ```
 
-`"START"` is alised to the `"Enter"` key.
+`"START"` is aliased to the `"Enter"` key.
 
 You may create your own sequences to use with this plugin. For example, if you wanted to leave off the final `"START"`, this is how you would configure:
 
