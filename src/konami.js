@@ -97,8 +97,7 @@
 		},
 		touch_evaluate: function () {
 			var key = "", pos = this.vars.pos, sequence = this.sequence,
-				tstart = this.vars.touchstart,
-				tend = this.vars.touchend;
+				tstart = this.vars.touchstart, tend = this.vars.touchend;
 
 			if (Math.abs(tstart[0] - tend[0]) < Math.abs(tstart[1] - tend[1])) {
 				key = (tstart[1] > tend[1]) ? "UP" : "DOWN";
