@@ -1,0 +1,7 @@
+{
+	"name": "Konami",
+    "version": "1.0",
+    "dependencies": {
+        "requirejs": "latest"
+    }
+}

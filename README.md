@@ -28,6 +28,14 @@ To initialize the plugin, add the following to your document:
 </script>
 ```
 
+OR if you are using a module loader like [RequireJS](http://requirejs.org/), include the following in your main JS file:
+
+```js
+require(["konami"], function (Konami) {
+    Konami.init();
+});
+```
+
 Whenever the correct code is entered, the plugin will trigger a custom event named `konami`.
 
 Add an event listener to fire any time the code is entered:

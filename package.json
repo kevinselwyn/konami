@@ -1,0 +1,19 @@
+{
+    "name": "Konami",
+    "version": "1.0",
+    "homepage": "http://kevinselwyn.com/",
+    "author": {
+        "name": "Kevin Selwyn"
+    },
+    "licenses": [
+        {
+            "type": "GPLv3",
+            "url": "http://www.gnu.org/licenses/gpl-3.0.html"
+        }
+    ],
+    "devDependencies": {
+        "grunt": "~0.4.1",
+        "grunt-contrib-jshint": "~0.6.3",
+        "grunt-contrib-uglify": "~0.2.2"
+    }
+}

@@ -21,16 +21,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*globals alert, console, CustomEvent, dispatchEvent, document, window*/
+/*globals alert, console, CustomEvent, define, dispatchEvent, document, module, window*/
 
 (function (window, document, undefined) {
 	"use strict";
 
 	var Konami = {
 		trigger: "konami",
-		sequence: ["UP", "UP", "DOWN", "DOWN",
-				   "LEFT", "RIGHT", "LEFT", "RIGHT",
-				   "B", "A", "START"],
+		sequence: ["UP", "UP", "DOWN", "DOWN", "LEFT", "RIGHT", "LEFT", "RIGHT", "B", "A", "START"],
 		limit: false,
 		debug: false,
 		vars: {
@@ -82,14 +80,12 @@
 			return true;
 		},
 		touchstart: function (e) {
-			Konami.vars.touchstart = [e.changedTouches[0].clientX,
-									  e.changedTouches[0].clientY];
+			Konami.vars.touchstart = [e.changedTouches[0].clientX, e.changedTouches[0].clientY];
 
 			return true;
 		},
 		touchend: function (e) {
-			Konami.vars.touchend = [e.changedTouches[0].clientX,
-									e.changedTouches[0].clientY];
+			Konami.vars.touchend = [e.changedTouches[0].clientX, e.changedTouches[0].clientY];
 
 			Konami.touch_evaluate();
 
@@ -164,5 +160,15 @@
 		}
 	};
 
-	window.Konami = Konami;
+    if (typeof module === "object" && module && typeof module.exports === "object") {
+        module.exports = Konami;
+    } else {
+        window.Konami = Konami;
+
+        if (typeof define === "function" && define.amd) {
+            define("konami", [], function () {
+                return Konami;
+            });
+        }
+    }
 }(window, document));
