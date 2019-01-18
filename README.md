@@ -24,7 +24,9 @@ To initialize the plugin, add the following to your document:
 
 ```html
 <script type="text/javascript">
-	Konami.init();
+    const konami = new Konami();
+
+    konami.init();
 </script>
 ```
 
@@ -34,15 +36,15 @@ Add an event listener to fire any time the code is entered:
 
 ```js
 document.addEventListener("konami", function () {
-	alert("999 Lives!")
+    alert("999 Lives!")
 });
 ```
 
 For best cross-browser performance, a custom event listener is included:
 
 ```js
-Konami.listen(function () {
-	alert("All Weapons!")
+konami.listen(function () {
+    alert("All Weapons!")
 });
 ```
 
@@ -67,7 +69,7 @@ Also, it is important to set up your mobile application to prevent default elast
 
 ```js
 document.addEventListener('touchmove', function (e) {
-	e.preventDefault();
+    e.preventDefault();
 }, false);
 ```
 
@@ -127,12 +129,12 @@ Tested and working on:
 
 **Desktop**
 
-*	Google Chrome (Mac + PC)
-*	Firefox (Mac + PC)
-*	Safari (Mac + PC)
-*	Opera (Mac + PC)
-*	IE8, IE9
+*    Google Chrome (Mac + PC)
+*    Firefox (Mac + PC)
+*    Safari (Mac + PC)
+*    Opera (Mac + PC)
+*    IE8, IE9
 
 **Mobile**
 
-*	Safari (iPhone)
+*    Safari (iPhone)
