@@ -1,8 +1,8 @@
-#Konami
+# Konami
 
 Konami is a Javascript plugin that allows for custom functions to be called when the user inputs the [Konami Code](http://en.wikipedia.org/wiki/Konami_Code) using either the keyboard or touch-based input.
 
-##The Konami Code
+## The Konami Code
 
 Traditionally, the Konami Code consists of 10 key or button presses as originally used in [Gradius](http://en.wikipedia.org/wiki/Gradius) for the [Nintendo Entertainment System](http://en.wikipedia.org/wiki/Nintendo_Entertainment_System).
 
@@ -12,7 +12,7 @@ The sequence goes:
 
 The last button is typically `"START"` because the code is frequently entered during a pause or start screen and the final `"START"` resumes or starts the game. For this reason, `"START"` (`"Enter"`) is included in the default Konami Code in this plugin.
 
-##Usage
+## Usage
 
 Include the following in the `<head>` of your document:
 
@@ -26,14 +26,6 @@ To initialize the plugin, add the following to your document:
 <script type="text/javascript">
 	Konami.init();
 </script>
-```
-
-OR if you are using a module loader like [RequireJS](http://requirejs.org/), include the following in your main JS file:
-
-```js
-require(["konami"], function (Konami) {
-    Konami.init();
-});
 ```
 
 Whenever the correct code is entered, the plugin will trigger a custom event named `konami`.
@@ -54,7 +46,18 @@ Konami.listen(function () {
 });
 ```
 
-###Gestures
+### Building
+
+Install and then build with `yarn` or `npm`:
+
+```bash
+yarn install
+yarn run build
+```
+
+The library can be found at: `dist/konami.js`
+
+### Gestures
 
 This plugin is also touchscreen gesture enabled. Swiping in the intended direction will be interpreted as that button press. For example, swiping up (bottom to top) will register as `"UP"`.
 
@@ -70,11 +73,11 @@ document.addEventListener('touchmove', function (e) {
 
 [Source](http://www.smilingsouls.net/Blog/20110804114957.html)
 
-##Configuration
+## Configuration
 
 There are a number of configurable aspects of this plugin.
 
-###Trigger
+### Trigger
 
 By default, the custom event that is fired upon completion of the sequence is `konami`. This may be changed:
 
@@ -82,7 +85,7 @@ By default, the custom event that is fired upon completion of the sequence is `k
 Konami.trigger = "konami_code";
 ```
 
-###Sequence
+### Sequence
 
 The default sequence included in this plugin is:
 
@@ -98,7 +101,7 @@ You may create your own sequences to use with this plugin. For example, if you w
 Konami.sequence = ["UP", "UP", "DOWN", "DOWN", "LEFT", "RIGHT", "LEFT", "RIGHT", "B", "A"]
 ```
 
-###Limit
+### Limit
 
 The plugin can fire the `konami` event a custom amount of times.
 
@@ -108,7 +111,7 @@ Konami.limit = 1;
 
 This will make the event fire only once. `false` (the default setting) will allow it to fire forever while `0` would prevent it from firing at all.
 
-###Debug
+### Debug
 
 Activating the debugger for this plugin may be useful for diagnosing some touch-related problems when meshing with your application.
 
@@ -118,7 +121,7 @@ Konami.debug = true;
 
 Turning the debugger on will `console.log` the button that has just been pressed. On older browsers, button presses will be `alert`ed.
 
-##Tested Environments
+## Tested Environments
 
 Tested and working on:
 

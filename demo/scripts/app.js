@@ -1,29 +1,7 @@
-/*globals document, require, requirejs, window*/
+const konami = new Konami();
 
-(function (document, window, undefined) {
-    "use strict";
+konami.init();
 
-    requirejs.config({
-        baseUrl: ".",
-        paths: {
-            "konami": "../dist/konami.min"
-        }
-    });
-
-    require(["konami"], function (Konami) {
-        Konami.init();
-    
-        Konami.listen(function () {
-            document.getElementById("message").className = "show";
-        });
-    
-        /*
-         * Prevent scrolling on iOS
-         *
-         * Source: http://www.smilingsouls.net/Blog/20110804114957.html
-         */
-        document.addEventListener("touchmove", function (e) {
-            e.preventDefault();
-        }, false);
-    });
-}(document, window));
+konami.listen(() => {
+    document.getElementById('message').className = 'show';
+});

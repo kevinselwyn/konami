@@ -11,7 +11,7 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -21,154 +21,165 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*globals alert, console, CustomEvent, define, dispatchEvent, document, module, window*/
+class Konami {
+    constructor() {
+        this.trigger = 'konami';
+        this.sequence = [
+            'UP',
+            'UP',
+            'DOWN',
+            'DOWN',
+            'LEFT',
+            'RIGHT',
+            'LEFT',
+            'RIGHT',
+            'B',
+            'A',
+            'START'
+        ];
+        this.limit = false;
+        this.debug = false;
+        this.pos = 0;
+        this.touchstart = [0, 0];
+        this.touchend = [0, 0];
+        this.buttons = {
+            13: 'START',
+            37: 'LEFT',
+            38: 'UP',
+            39: 'RIGHT',
+            40: 'DOWN',
+            66: 'B',
+            65: 'A'
+        };
+    }
 
-(function (window, document, undefined) {
-	"use strict";
+    _keyup(e) {
+        const key = this.buttons[e.keyCode];
 
-	var Konami = {
-		trigger: "konami",
-		sequence: ["UP", "UP", "DOWN", "DOWN", "LEFT", "RIGHT", "LEFT", "RIGHT", "B", "A", "START"],
-		limit: false,
-		debug: false,
-		vars: {
-			pos: 0,
-			touchstart: [0, 0],
-			touchend: [0, 0],
-			buttons: {
-				13: "START",
-				37: "LEFT",
-				38: "UP",
-				39: "RIGHT",
-				40: "DOWN",
-				66: "B",
-				65: "A"
-			}
-		},
-		keyup: function (e) {
-			var key = Konami.vars.buttons[e.keyCode];
+        this.key_evaluate(key);
 
-			Konami.key_evaluate(key);
+        return true;
+    }
 
-			return true;
-		},
-		key_evaluate: function (key) {
-			var event = this.trigger, pos = this.vars.pos,
-				sequence = this.sequence;
+    key_evaluate(key) {
+        let pos = this.pos;
 
-			this.debugging(key);
+        this.debugging(key);
 
-			pos = (sequence[pos] === key) ? pos + 1 : 0;
+        pos = (this.sequence[pos] === key) ? pos + 1 : 0;
 
-			if (pos === sequence.length && this.limit !== 0) {
-				pos = 0;
+        if (pos === this.sequence.length && this.limit !== 0) {
+            pos = 0;
 
-				if (this.limit !== false) {
-					this.limit -= 1;
-				}
+            if (this.limit !== false) {
+                this.limit -= 1;
+            }
 
-				if (dispatchEvent) {
-					event = new CustomEvent(event);
-					document.dispatchEvent(event);
-				} else {
-					document.documentElement[event] += 1;
-				}
-			}
+            if (dispatchEvent) {
+                document.dispatchEvent(new CustomEvent(this.trigger));
+            } else {
+                document.documentElement[this.trigger] += 1;
+            }
+        }
 
-			this.vars.pos = pos;
+        this.pos = pos;
 
-			return true;
-		},
-		touchstart: function (e) {
-			Konami.vars.touchstart = [e.changedTouches[0].clientX, e.changedTouches[0].clientY];
+        return true;
+    }
 
-			return true;
-		},
-		touchend: function (e) {
-			Konami.vars.touchend = [e.changedTouches[0].clientX, e.changedTouches[0].clientY];
+    _touchstart(e) {
+        this.touchstart = [e.changedTouches[0].clientX, e.changedTouches[0].clientY];
 
-			Konami.touch_evaluate();
+        return true;
+    }
 
-			return true;
-		},
-		touch_evaluate: function () {
-			var key = "", pos = this.vars.pos, sequence = this.sequence,
-				tstart = this.vars.touchstart, tend = this.vars.touchend;
+    _touchend(e) {
+        this.touchend = [e.changedTouches[0].clientX, e.changedTouches[0].clientY];
 
-			if (Math.abs(tstart[0] - tend[0]) < Math.abs(tstart[1] - tend[1])) {
-				key = (tstart[1] > tend[1]) ? "UP" : "DOWN";
-			} else {
-				key = (tstart[0] > tend[0]) ? "LEFT" : "RIGHT";
-			}
+        this.touch_evaluate();
 
-			if (["UP", "DOWN", "LEFT", "RIGHT"].indexOf(sequence[pos]) === -1) {
-				key = sequence[pos];
-			}
+        return true;
+    }
 
-			this.key_evaluate(key);
+    touch_evaluate() {
+        const tstart = this.touchstart;
+        const tend = this.touchend;
+        let key = '';
 
-			return true;
-		},
-		init: function () {
-			this.events();
+        if (Math.abs(tstart[0] - tend[0]) < Math.abs(tstart[1] - tend[1])) {
+            key = (tstart[1] > tend[1]) ? 'UP' : 'DOWN';
+        } else {
+            key = (tstart[0] > tend[0]) ? 'LEFT' : 'RIGHT';
+        }
 
-			return true;
-		},
-		listen: function (callback) {
-			var d = document;
+        if (['UP', 'DOWN', 'LEFT', 'RIGHT'].indexOf(this.sequence[this.pos]) === -1) {
+            key = this.sequence[this.pos];
+        }
 
-			if (d.addEventListener) {
-				d.addEventListener(Konami.trigger, callback);
-			} else {
-				d.documentElement.attachEvent("onpropertychange", function (e) {
-					if (e.propertyName === Konami.trigger) {
-						callback.call();
-					}
-				});
-			}
+        this.key_evaluate(key);
 
-			return true;
-		},
-		listener: function (event, callback) {
-			if (document.addEventListener) {
-				document.addEventListener(event, callback);
-			} else {
-				document.attachEvent("on" + event, callback);
-			}
+        return true;
+    }
 
-			return true;
-		},
-		events: function () {
-			this.listener("keyup", this.keyup);
-			this.listener("touchstart", this.touchstart);
-			this.listener("touchend", this.touchend);
+    init() {
+        this.events();
 
-			return true;
-		},
-		debugging: function (key) {
-			if (this.debug === false) {
-				return false;
-			}
+        return true;
+    }
 
-			if (console) {
-				console.log(key);
-			} else {
-				alert(key);
-			}
+    listen(callback) {
+        const d = document;
 
-			return true;
-		}
-	};
-
-    if (typeof module === "object" && module && typeof module.exports === "object") {
-        module.exports = Konami;
-    } else {
-        window.Konami = Konami;
-
-        if (typeof define === "function" && define.amd) {
-            define("konami", [], function () {
-                return Konami;
+        if (d.addEventListener) {
+            d.addEventListener(this.trigger, callback);
+        } else {
+            d.documentElement.attachEvent('onpropertychange', function (e) {
+                if (e.propertyName === this.trigger) {
+                    callback.call();
+                }
             });
         }
+
+        return true;
     }
-}(window, document));
+
+    listener(event, callback) {
+        if (document.addEventListener) {
+            document.addEventListener(event, callback);
+        } else {
+            document.attachEvent('on' + event, callback);
+        }
+
+        return true;
+    }
+
+    events() {
+        this.listener('keyup', (e) => {
+            this._keyup(e);
+        });
+        this.listener('touchstart', (e) => {
+            this._touchstart(e);
+        });
+        this.listener('touchend', (e) => {
+            this._touchend(e);
+        });
+
+        return true;
+    }
+
+    debugging(key) {
+        if (this.debug === false) {
+            return false;
+        }
+
+        if (console) {
+            console.log(key);
+        } else {
+            alert(key);
+        }
+
+        return true;
+    }
+}
+
+module.exports = Konami;
